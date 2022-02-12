@@ -1,16 +1,19 @@
 //
-// Created by dude on 2/10/22.
+// Created by dude on 2/8/22.
 //
 
 #include "Node.h"
 
+#include <utility>
+
 Node::Node() {}
 
-Node::Node(const std::string &key) : smKey_{key}, left_{nullptr}, mid_{nullptr}, right_{nullptr} {}
+Node::Node(const std::string &key, int val) : smKey_{key}, smVal_{val},
+           left_{nullptr}, mid_{nullptr}, right_{nullptr} {}
 
 Node::Node(const std::string &key, std::shared_ptr<Node> leftPtr, std::shared_ptr<Node> midPtr,
-           std::shared_ptr<Node> rightPtr) : smKey_{key}, left_{leftPtr},
-           mid_{midPtr}, right_{rightPtr} {}
+           std::shared_ptr<Node> rightPtr) : smKey_{key}, left_{std::move(leftPtr)},
+           mid_{std::move(midPtr)}, right_{std::move(rightPtr)} {}
 
 Node::~Node() = default;
 
@@ -33,6 +36,10 @@ bool Node::isThreeNode() const {
         return true;
     }
     return false;
+}
+
+bool Node::isTwoVal() const {
+    return twoVal_;
 }
 
 std::string Node::getSmKey() const {
@@ -64,6 +71,7 @@ void Node::setSmVal(const int &val) {
 }
 
 void Node::setLgVal(const int &val) {
+    twoVal_ = true;
     lgVal_ = val;
 }
 
@@ -79,16 +87,30 @@ std::shared_ptr<Node> Node::getRightPtr() const {
     return right_;
 }
 
+std::shared_ptr<Node> Node::getTempPtr() const {
+    return temp_;
+}
+
+std::shared_ptr<Node> Node::getParent() const {
+    return parent_;
+}
+
 void Node::setLeftPtr(std::shared_ptr<Node> leftPtr) {
-    left_ = leftPtr;
+    left_ = std::move(leftPtr);
 }
 
 void Node::setMidPtr(std::shared_ptr<Node> midPtr) {
-    mid_ = midPtr;
+    mid_ = std::move(midPtr);
 }
 
 void Node::setRightPtr(std::shared_ptr<Node> rightPtr) {
-    right_ = rightPtr;
+    right_ = std::move(rightPtr);
 }
 
+void Node::setTempPtr(std::shared_ptr<Node> tempPtr) {
+    temp_ = std::move(tempPtr);
+}
 
+void Node::setParent(std::shared_ptr<Node> parent) {
+    parent_ = std::move(parent);
+}

@@ -1,6 +1,11 @@
 #include <iostream>
+#include "Index.h"
+
+void test1() {
+
+}
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    test1();
     return 0;
 }
