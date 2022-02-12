@@ -7,6 +7,8 @@
 
 #include <vector>
 
+class Node;
+
 class Index {
 private:
     std::shared_ptr<Node> root_;
@@ -25,6 +27,8 @@ public:
 
     // find an element in the index
     int Find(const std::shared_ptr<Node>& root, int target);
+
+    std::shared_ptr<Node> findNode(std::shared_ptr<Node> root, std::shared_ptr<std::string> &key);
 
     void split(std::shared_ptr<Node> &node);
 

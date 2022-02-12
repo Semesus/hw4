@@ -12,30 +12,25 @@ Index::Index() : root_{nullptr} {}
 
 void Index::Insert(std::shared_ptr<std::string> &key, int val) {
     // if root == nullptr
+    if(root_ == nullptr) {
         // root = make_shared<Node>(key, val)
-
-
-
+        root_ = std::make_shared<Node>(*key, val);
+        return;
+    }
     // locate leafNode in which newItem belongs
-    // if target in root node
-        // treeItem = data portion of root
-        // return treeItem
-    // else if root is leaf
-        // return -1
-    // else if root has 2 data items
-        // if target < smallKey
-            //return find(root->left, target
-        // else if target < lgKey
-            // return find(root->mid, target
-        // else
-            // return find(root->right, target
-    // else // root has 1 data item
-        // if target < root data
-            // return find(root->left, target
-        // else
-            // return find(root->right, target
-
+    std::shared_ptr<Node> leafNode = findNode(root_, key);
     // add newItem to leafNode
+    //if(leafNode->isTwoVal()) {
+        if(leafNode->getSmKey().compare(*key) > 0) {
+            leafNode->setLgKey(leafNode->getSmKey());
+            leafNode->setLgVal(leafNode->getSmVal());
+            leafNode->setSmKey(*key);
+            leafNode->setSmVal(val);
+        } else {
+            leafNode->setLgKey(*key);
+            leafNode->setLgVal(val);
+        }
+    //}
     //if leafNode has 3 items
         //split(leafNode)
 }
@@ -138,6 +133,37 @@ int Index::Find(const std::shared_ptr<Node>& root, int target) {
     //return -1;
 }
 
+std::shared_ptr<Node> Index::findNode(std::shared_ptr<Node> root, std::shared_ptr<std::string> &key) {
+    if(root->isLeaf()) {
+        return root;
+    }
+    // else if root has 2 keys
+    else if (root->isTwoVal()) {
+        if(root->getSmKey().compare(*key) < 0) {
+            root->setParent(root);
+            return findNode(root->getLeftPtr(), key);
+        } else if(root->getLgKey().compare(*key) < 0) {
+            root->setParent(root);
+            return findNode(root->getMidPtr(), key);
+        } else {
+            root->setParent(root);
+            return findNode(root->getRightPtr(), key);
+        }
+    }
+    // else root has 1 key
+    else {
+        if(root->getSmKey().compare(*key) < 0) {
+            root->setParent(root);
+            return findNode(root->getLeftPtr(), key);
+        } else {
+            root->setParent(root);
+            return findNode(root->getRightPtr(), key);
+        }
+    }
+
+    return std::shared_ptr<Node>();
+}
+
 void Index::printTree(std::shared_ptr<Node> root, int indent) {
     if(root == nullptr) {
         return;
@@ -155,4 +181,6 @@ void Index::printTree(std::shared_ptr<Node> root, int indent) {
 void Index::print(std::shared_ptr<Node> &root) {
     printTree(root, 1);
 }
+
+
 
