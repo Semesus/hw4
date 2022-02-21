@@ -10,6 +10,8 @@
 
 Index::Index() : root_{nullptr} {}
 
+Index::~Index() = default;
+
 void Index::Insert(std::shared_ptr<std::string> &key, int val) {
     // if root == nullptr
     if(root_ == nullptr) {
@@ -21,6 +23,8 @@ void Index::Insert(std::shared_ptr<std::string> &key, int val) {
     std::shared_ptr<Node> leafNode = findNode(root_, key);
     // add newItem to leafNode
     //if(leafNode->isTwoVal()) {
+        // if leaf->getSm.compare == 0
+            // overwrite val
         if(leafNode->getSmKey().compare(*key) > 0) {
             leafNode->setLgKey(leafNode->getSmKey());
             leafNode->setLgVal(leafNode->getSmVal());
@@ -32,7 +36,11 @@ void Index::Insert(std::shared_ptr<std::string> &key, int val) {
         }
     //}
     //if leafNode has 3 items
+    if(leafNode->isThreeNode()) {
+        split(leafNode);
+    }
         //split(leafNode)
+    print(root_);
 }
 
 void Index::split(std::shared_ptr<Node> &node) {
@@ -131,6 +139,7 @@ int Index::Find(const std::shared_ptr<Node>& root, int target) {
         }
     }
     //return -1;
+    //iterative version
 }
 
 std::shared_ptr<Node> Index::findNode(std::shared_ptr<Node> root, std::shared_ptr<std::string> &key) {
@@ -160,8 +169,15 @@ std::shared_ptr<Node> Index::findNode(std::shared_ptr<Node> root, std::shared_pt
             return findNode(root->getRightPtr(), key);
         }
     }
-
     return std::shared_ptr<Node>();
+    // iterative version
+    std::shared_ptr<Node> curr = root;
+    while(!curr->isLeaf() && !curr->contains(key)) {
+        if(curr->isThreeNode()) {
+            if(curr.com)
+        }
+    }
+    return curr;
 }
 
 void Index::printTree(std::shared_ptr<Node> root, int indent) {
@@ -174,12 +190,20 @@ void Index::printTree(std::shared_ptr<Node> root, int indent) {
     for (int i = COUNT; i < indent; i++) {
         std::cout << " ";
     }
-    //std::cout << root->getValue() << "\n"; // fix for multi node
+    if(root->isTwoVal()) {
+        std::cout << root->getSmKey() << " | " << root->getLgKey() << "\n";
+    } else {
+        std::cout << root->getSmKey() << "\n"; // fix for multi node
+    }
     printTree(root->getLeftPtr(), indent);
 }
 
 void Index::print(std::shared_ptr<Node> &root) {
-    printTree(root, 1);
+    printTree(root, COUNT);
+}
+
+std::shared_ptr<Node> Index::getRoot() const {
+    return root_;
 }
 
 

@@ -12,12 +12,18 @@ class Node;
 class Index {
 private:
     std::shared_ptr<Node> root_;
+
+    void split(std::shared_ptr<Node> &node);
+    // from lecture
+    std::shared_ptr<Node> locate(std::shared_ptr<std::string>);
+
     std::shared_ptr<Node> balance();
-    void balance(std::vector<int> &data, int low, int high, std::shared_ptr<Node> &root);
+    void balance(std::shared_ptr<Node>, std::shared_ptr<Node>);
 
 public:
     // public ctor
     Index();
+    ~Index();
 
     // insert an element in the index, associate the integer value with the element
     void Insert(std::shared_ptr<std::string> &key, int val);
@@ -30,7 +36,7 @@ public:
 
     std::shared_ptr<Node> findNode(std::shared_ptr<Node> root, std::shared_ptr<std::string> &key);
 
-    void split(std::shared_ptr<Node> &node);
+    std::shared_ptr<Node> getRoot() const;
 
     void printTree(std::shared_ptr<Node> root, int indent);
 

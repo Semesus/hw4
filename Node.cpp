@@ -6,7 +6,7 @@
 
 #include <utility>
 
-Node::Node() {}
+Node::Node() = default;
 
 Node::Node(const std::string &key, int val) : smKey_{key}, smVal_{val},
            left_{nullptr}, mid_{nullptr}, right_{nullptr} {}
@@ -113,4 +113,40 @@ void Node::setTempPtr(std::shared_ptr<Node> tempPtr) {
 
 void Node::setParent(std::shared_ptr<Node> parent) {
     parent_ = std::move(parent);
+}
+
+// from lecture
+void Node::replace(std::shared_ptr<Node> n, std::shared_ptr<Node> n1, std::shared_ptr<Node> n2) {
+    if(n == left_) {
+        temp_ = right_;
+        right_ = mid_;
+        mid_ = n2;
+        left_ = n1;
+    }  else if(n == mid_) {
+        temp_ = right_;
+        right_ = n2;
+        mid_ = n1;
+        // left_ unchanged
+    } else {
+        temp_ = n2;
+        right_ = n1;
+    }
+}
+
+bool Node::contains(std::shared_ptr<std::string> &key) {
+    if(getSmKey().compare(*key) == 0) {
+        return true;
+    }
+    if(getLgKey().compare(*key) == 0) {
+        return true;
+    }
+    return false;
+}
+
+int Node::compare(std::shared_ptr<Node> other) {
+    //if(other == nullptr || other->getSmKey() == nullptr)
+}
+
+int Node::compare(std::shared_ptr<std::string> other) {
+    return 0;
 }

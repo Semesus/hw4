@@ -10,11 +10,9 @@
 class Node {
 private:
     std::string smKey_, lgKey_;
-    int smVal_, lgVal_;
+    int smVal_{}, lgVal_{};
     bool twoVal_ = false;
-    std::shared_ptr<Node> left_;
-    std::shared_ptr<Node> mid_;
-    std::shared_ptr<Node> right_;
+    std::shared_ptr<Node> left_, mid_, right_;
     std::shared_ptr<Node> temp_ = nullptr;
     std::shared_ptr<Node> parent_ = nullptr;
 
@@ -51,6 +49,11 @@ public:
     void setRightPtr(std::shared_ptr<Node> rightPtr);
     void setTempPtr(std::shared_ptr<Node> tempPtr);
     void setParent(std::shared_ptr<Node> parent);
+
+    void replace(std::shared_ptr<Node>, std::shared_ptr<Node>, std::shared_ptr<Node>);
+    bool contains(std::shared_ptr<std::string> &key);
+    int compare(std::shared_ptr<Node> other);
+    int compare(std::shared_ptr<std::string> other);
 };
 
 #endif //HW4_NODE_H
