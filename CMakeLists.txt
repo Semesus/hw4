@@ -3,4 +3,4 @@ project(hw4)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(hw4 main.cpp Node.cpp Node.h Index.cpp Index.h)
+add_executable(hw4 main.cpp Node.cpp Node.h Index.cpp Index.h Map.cpp Map.h)

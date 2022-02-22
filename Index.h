@@ -8,17 +8,20 @@
 #include <vector>
 
 class Node;
+class Map;
 
 class Index {
 private:
     std::shared_ptr<Node> root_;
 
-    void split(std::shared_ptr<Node> &node);
+    void split(std::shared_ptr<Node> &);
     // from lecture
-    std::shared_ptr<Node> locate(std::shared_ptr<std::string>);
+    //std::shared_ptr<Node> locate(std::shared_ptr<std::string>);
+    void fixTree(std::shared_ptr<Node>, std::shared_ptr<Node>);
 
-    std::shared_ptr<Node> balance();
-    void balance(std::shared_ptr<Node>, std::shared_ptr<Node>);
+    // returns node w/ key or node that should have key
+    std::shared_ptr<Node> findNode(std::shared_ptr<std::string>&);
+
 
 public:
     // public ctor
@@ -32,7 +35,7 @@ public:
     void Remove(std::shared_ptr<std::string> &key);
 
     // find an element in the index
-    int Find(const std::shared_ptr<Node>& root, int target);
+    int Find(std::shared_ptr<std::string> &key);
 
     std::shared_ptr<Node> findNode(std::shared_ptr<Node> root, std::shared_ptr<std::string> &key);
 
