@@ -14,51 +14,25 @@ Index::Index() : root_{nullptr} {}
 Index::~Index() = default;
 
 void Index::Insert(std::shared_ptr<std::string> &key, int val) {
-    std::shared_ptr<Map> newMap = std::make_shared<Map>(key, val);
+    std::shared_ptr<Map> newNode = std::make_shared<Map>(key, val);
+    if(root_ == nullptr) {
+        root_ = std::make_shared<Node>();
+        //root_->insert(newNode);
+    }
     // locate leafNode in which newItem belongs
     std::shared_ptr<Node> curr = findNode(key);
     // add newItem to leafNode
-    if(curr->insert(newMap)) {
+    if(curr->insert(newNode)) {
         return;
     }
     //if leafNode has 3 items
     if(curr->toSplit()) {
         split(curr);
     }
+    //print(root_);
 }
-/*
-void Index::Insert(std::shared_ptr<std::string> &key, int val) {
-    // if root == nullptr
-    if(root_ == nullptr) {
-        // root = make_shared<Node>(key, val)
-        root_ = std::make_shared<Node>(*key, val);
-        return;
-    }
-    // locate leafNode in which newItem belongs
-    std::shared_ptr<Node> leafNode = findNode(root_, key);
-    // add newItem to leafNode
-    //if(leafNode->isTwoVal()) {
-        // if leaf->getSm.compare == 0
-            // overwrite val
-        if(leafNode->getSmKey().compare(*key) > 0) {
-            leafNode->setLgKey(leafNode->getSmKey());
-            leafNode->setLgVal(leafNode->getSmVal());
-            leafNode->setSmKey(*key);
-            leafNode->setSmVal(val);
-        } else {
-            leafNode->setLgKey(*key);
-            leafNode->setLgVal(val);
-        }
-    //}
-    //if leafNode has 3 items
-    if(leafNode->isThreeNode()) {
-        split(leafNode);
-    }
-        //split(leafNode)
-    print(root_);
-}*/
 
-void Index::split(std::shared_ptr<Node> &node) {
+void Index::split(std::shared_ptr<Node> node) {
 // Splits node n, which contains 2 items (if n not leaf, has 4 children
     // split(n: 2-3Node
     std::shared_ptr<Node> parent;
@@ -74,7 +48,9 @@ void Index::split(std::shared_ptr<Node> &node) {
     // replace node n w/ 2 nodes, n1 and n2, so p is their parent
     std::shared_ptr<Node> n1 = std::make_shared<Node>();
     std::shared_ptr<Node> n2 = std::make_shared<Node>();
+    //if(parent != root_) {
     parent->replace(node, n1, n2);
+   // }
     n1->setParent(parent);
     n2->setParent(parent);
     // give n1 the item in n w/ smallest val
@@ -97,6 +73,26 @@ void Index::split(std::shared_ptr<Node> &node) {
         // split(p)
         split(parent);
     }
+}
+
+std::shared_ptr<Node> Index::findNode(std::shared_ptr<std::string> &key) {
+    std::shared_ptr<Node> curr = root_;
+    while(!curr->isLeaf() && !curr->contains(key)) {
+        if(curr->isThreeNode()) {
+            if(curr->getMed()->compare(key) < 0) {
+                curr = curr->getCharlie();
+                continue;
+            }
+        }
+        // two node, so no C
+        if(curr->getSm()->compare(key) < 0) {
+            curr = curr->getBravo();
+        } else {
+            curr = curr->getAlpha();
+        }
+    }
+    // either not in tree or leaf where key should go
+    return curr;
 }
 
 void Index::Remove(std::shared_ptr<std::string> &key) {
@@ -139,108 +135,23 @@ int Index::Find(std::shared_ptr<std::string> &key) {
     }
     return newMap->getVal();
 }
-/*
-int Index::Find(const std::shared_ptr<Node>& root, int target) {
-    // if target in root node
-    if(root->getSmVal() == target) {
-        return root->getSmVal();
-    }
-    else if(root->getLgVal() == target) {
-        return root->getLgVal();
-    }
-    // else if root is leaf
-    else if(root->isLeaf()) { // maybe remove?
-        return -1;
-    }
-    // else if root has 2 data items
-    else if(root->isTwoVal()) {
-        // if target < smallKey
-        if(target < root->getSmVal()) {
-            //return find(root->left, target
-            return Find(root->getLeftPtr(), target);
-        }
-        // else if target < lgKey
-        else if(target < root->getLgVal()) {
-            // return find(root->mid, target
-            return Find(root->getMidPtr(), target);
-        }
-        // else
-        else {
-            // return find(root->right, target
-            return Find(root->getRightPtr(), target);
-        }
-    }
-    // else // root has 1 data item
-    else {
-        // if target < root data
-        if(target < root->getSmVal()) {
-            // return find(root->left, target
-            return Find(root->getLeftPtr(), target);
-        }
-        // else
-        else {
-            // return find(root->right, target
-            return Find(root->getRightPtr(), target);
-        }
-    }
-    //return -1;
-    //iterative version
-}*/
-/*
-std::shared_ptr<Node> Index::findNode(std::shared_ptr<Node> root, std::shared_ptr<std::string> &key) {
-    if(root->isLeaf()) {
-        return root;
-    }
-    // else if root has 2 keys
-    else if (root->isTwoVal()) {
-        if(root->getSmKey().compare(*key) < 0) {
-            root->setParent(root);
-            return findNode(root->getLeftPtr(), key);
-        } else if(root->getLgKey().compare(*key) < 0) {
-            root->setParent(root);
-            return findNode(root->getMidPtr(), key);
-        } else {
-            root->setParent(root);
-            return findNode(root->getRightPtr(), key);
-        }
-    }
-    // else root has 1 key
-    else {
-        if(root->getSmKey().compare(*key) < 0) {
-            root->setParent(root);
-            return findNode(root->getLeftPtr(), key);
-        } else {
-            root->setParent(root);
-            return findNode(root->getRightPtr(), key);
-        }
-    }
-    return std::shared_ptr<Node>();
-    // iterative version
-    std::shared_ptr<Node> curr = root;
-    while(!curr->isLeaf() && !curr->contains(key)) {
-        if(curr->isThreeNode()) {
-            if(curr.com)
-        }
-    }
-    return curr;
-}*/
 
 void Index::printTree(std::shared_ptr<Node> root, int indent) {
     if(root == nullptr) {
         return;
     }
     indent += COUNT;
-    printTree(root->getRightPtr(), indent);
+    printTree(root->getBravo(), indent);
     std::cout << std::endl;
     for (int i = COUNT; i < indent; i++) {
         std::cout << " ";
     }
-    if(root->isTwoVal()) {
-        std::cout << root->getSm() << " | " << root->getLg() << "\n";
+    if(root->isThreeNode()) {
+        std::cout << root->getSm() << " | " << root->getMed() << "\n";
     } else {
         std::cout << root->getSm() << "\n"; // fix for multi node
     }
-    printTree(root->getLeftPtr(), indent);
+    printTree(root->getAlpha(), indent);
 }
 
 void Index::print(std::shared_ptr<Node> &root) {
@@ -249,26 +160,6 @@ void Index::print(std::shared_ptr<Node> &root) {
 
 std::shared_ptr<Node> Index::getRoot() const {
     return root_;
-}
-
-std::shared_ptr<Node> Index::findNode(std::shared_ptr<std::string> &key) {
-    std::shared_ptr<Node> curr = root_;
-    while(!curr->isLeaf() && curr->contains(key) != 0) {
-        if(curr->isThreeNode()) {
-            if(curr->getMed()->compare(key) < 0) {
-                curr = curr->getCharlie();
-                continue;
-            }
-        }
-        // two node, so no C
-        if(curr->getSm()->compare(key) < 0) {
-            curr = curr->getBravo();
-        } else {
-            curr = curr->getAlpha();
-        }
-    }
-    // either not in tree or leaf where key should go
-    return curr;
 }
 
 void Index::fixTree(std::shared_ptr<Node>, std::shared_ptr<Node>) {
@@ -285,10 +176,11 @@ void Index::fixTree(std::shared_ptr<Node>, std::shared_ptr<Node>) {
             // bring appropriate item down from p into s
             // if(n != leafNode
                     // move n's child to s
-                // remove node n
-                // if(p now empty)
-                        // fixTree(p)
+            // remove node n
+            // if(p now empty)
+                 // fixTree(p)
 }
+
 
 
 

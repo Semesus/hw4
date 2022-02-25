@@ -14,7 +14,7 @@ class Index {
 private:
     std::shared_ptr<Node> root_;
 
-    void split(std::shared_ptr<Node> &);
+    void split(std::shared_ptr<Node> );
     // from lecture
     //std::shared_ptr<Node> locate(std::shared_ptr<std::string>);
     void fixTree(std::shared_ptr<Node>, std::shared_ptr<Node>);

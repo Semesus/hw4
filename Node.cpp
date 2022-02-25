@@ -11,9 +11,9 @@
 Node::Node() = default;
 
 /*
-Node::Node(const std::string &key, int val) : smKey_{key}, smVal_{val},
+Node::Node(const std::string &key, int val) : sm_{key}, smVal_{val},
            left_{nullptr}, mid_{nullptr}, right_{nullptr} {}
-
+/*
 Node::Node(const std::string &key, std::shared_ptr<Node> leftPtr, std::shared_ptr<Node> midPtr,
            std::shared_ptr<Node> rightPtr) : smKey_{key}, left_{std::move(leftPtr)},
            mid_{std::move(midPtr)}, right_{std::move(rightPtr)} {}
@@ -21,17 +21,21 @@ Node::Node(const std::string &key, std::shared_ptr<Node> leftPtr, std::shared_pt
 Node::~Node() = default;
 
 bool Node::isLeaf() const {
-    return !alpha_ && !bravo_ && !charlie_;
+    //return !alpha_ && !bravo_ && !charlie_;
+    if(alpha_ == nullptr && bravo_ == nullptr && charlie_ == nullptr) {
+        return true;
+    }
+    return false;
 }
 
 bool Node::isTwoNode() const {
     return sm_ && !med_;
 }
-/*
+
 bool Node::isThreeNode() const {
     return sm_ && med_;
 }
-
+/*
 bool Node::isTwoVal() const {
     return twoVal_;
 }
@@ -120,8 +124,13 @@ void Node::setTempPtr(std::shared_ptr<Node> tempPtr) {
     }
 }*/
 
-void Node::replace(std::shared_ptr<Node> n, std::shared_ptr<Node> n1, std::shared_ptr<Node> n2) {
-    if(n == alpha_) {
+void Node::replace(std::shared_ptr<Node> &n, std::shared_ptr<Node> &n1, std::shared_ptr<Node> &n2) {
+    //if(n->isLeaf()) {
+    //   alpha_ = n1;
+    //    bravo_ = n2;
+    //}
+
+     if(n == alpha_) {
         delta_ = charlie_;
         charlie_ = bravo_;
         bravo_ = n2;
@@ -130,11 +139,13 @@ void Node::replace(std::shared_ptr<Node> n, std::shared_ptr<Node> n1, std::share
         delta_ = charlie_;
         charlie_ = n2;
         bravo_ = n1;
-        // alpha_ unchanged
-    } else {
+    } else if(n == charlie_){
         delta_ = n2;
         charlie_ = n1;
-    }
+    } else {
+         alpha_ = n1;
+         bravo_ = n2;
+     }
 }
 
 bool Node::contains(std::shared_ptr<std::string> &key) const {
@@ -147,37 +158,41 @@ bool Node::contains(std::shared_ptr<std::string> &key) const {
     return false;
 }
 
-// newNode->key not
-bool Node::insert(std::shared_ptr<Map> newNode) {
-    if(sm_->compare(newNode) == 0) {
-        sm_ = newNode;
+bool Node::insert(const std::shared_ptr<Map> &newItem) {
+    if(sm_ == nullptr) {
+        sm_ = newItem;
         return true;
     }
-    // TODO: check if med == nullptr once and make rest else if
-    if(med_ != nullptr && med_->compare(newNode) == 0) {
-        med_ = newNode;
+    if(sm_->compare(newItem) == 0) {
+        sm_ = newItem;
         return true;
     }
-    if(med_ != nullptr && med_->compare(newNode) < 0) {
-        lg_ = newNode;
-        return false;
-    }
-    if(med_ != nullptr && med_->compare(newNode) > 0) {
-        lg_ = med_;
-        if(sm_->compare(newNode) < 0) {
-            med_ = newNode;
-        } else {
-            med_ = sm_;
-            sm_ = newNode;
+    if(med_ != nullptr) {
+        if(med_->compare(newItem) == 0) {
+            med_ = newItem;
+            return true;
         }
-        return false;
+        if(med_->compare(newItem) < 0) {
+            lg_ = newItem;
+            return false;
+        }
+        if(med_->compare(newItem) > 0) {
+            lg_ = med_;
+            if(sm_->compare(newItem) < 0) {
+                med_ = newItem;
+            } else {
+                med_ = sm_;
+                sm_ = newItem;
+            }
+            return false;
+        }
     }
     // med == nullptr
-    if(sm_->compare(newNode) < 0) {
+    if(sm_->compare(newItem) > 0) {
         med_ = sm_;
-        sm_ = newNode;
+        sm_ = newItem;
     } else {
-        med_ = newNode;
+        med_ = newItem;
     }
     return false;
 }
@@ -198,16 +213,16 @@ std::shared_ptr<Map> Node::getLg() {
     return lg_;
 }
 
-void Node::setSm(std::shared_ptr<Map>) {
-
+void Node::setSm(std::shared_ptr<Map> sm) {
+    sm_ = sm;
 }
 
-void Node::setMed(std::shared_ptr<Map>) {
-
+void Node::setMed(std::shared_ptr<Map> med) {
+    med_ = med;
 }
 
-void Node::setLg(std::shared_ptr<Map>) {
-
+void Node::setLg(std::shared_ptr<Map> lg) {
+    lg_ = lg;
 }
 std::shared_ptr<Node> Node::getAlpha() {
     return alpha_;
@@ -245,7 +260,7 @@ void Node::setDelta(std::shared_ptr<Node> d) {
     delta_ = std::move(d);
 }
 
-void Node::setParent(std::shared_ptr<Node> parent) {
+void Node::setParent(const std::shared_ptr<Node> &parent) {
     parent_ = std::move(parent);
 }
 

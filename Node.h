@@ -31,7 +31,7 @@ public:
     bool isThreeNode() const;
     bool isTwoVal() const;
 
-    bool insert(std::shared_ptr<Map>);
+    bool insert(const std::shared_ptr<Map>&);
     bool toSplit();
 
     std::shared_ptr<Map> getSm();
@@ -54,7 +54,7 @@ public:
     void setBravo(std::shared_ptr<Node>);
     void setCharlie(std::shared_ptr<Node>);
     void setDelta(std::shared_ptr<Node>);
-    void setParent(std::shared_ptr<Node>);
+    void setParent(const std::shared_ptr<Node>&);
 
     //std::string getSmKey() const;
     //std::string getLgKey() const;
@@ -78,7 +78,7 @@ public:
     void setTempPtr(std::shared_ptr<Node> tempPtr);
     //void setParent(std::shared_ptr<Node> parent);
 
-    void replace(std::shared_ptr<Node>, std::shared_ptr<Node>, std::shared_ptr<Node>);
+    void replace(std::shared_ptr<Node>&, std::shared_ptr<Node>&, std::shared_ptr<Node>&);
     bool contains(std::shared_ptr<std::string> &key) const;
 };
 
